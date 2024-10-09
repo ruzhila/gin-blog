@@ -1,0 +1,31 @@
+FROM golang:1.23-bookworm AS builder
+RUN mkdir /build
+ADD . /build/
+WORKDIR /build
+ENV CGO_ENABLED=1
+ENV GO111MODULE=on
+ENV GOPROXY=https://goproxy.cn
+RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN go mod tidy && go mod download
+RUN go test ./...
+RUN cd cmd && \
+    GIT_COMMIT=$(git rev-list -1 HEAD) && \
+    BUILD_TIME=$(date "+%Y-%m-%d_%H:%M:%S") && \
+    go build -ldflags "-X main.GitCommit=$GIT_COMMIT -X main.BuildTime=$BUILD_TIME" \
+    -o /build/ginblog .
+
+FROM debian:bookworm
+LABEL maintainer="admin@ruzhila.cn"
+RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources
+RUN apt-get update && apt-get install -y ca-certificates tzdata git
+ENV DEBIAN_FRONTEND noninteractive
+ENV LANG C.UTF-8
+
+RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+WORKDIR /app
+COPY --from=builder /build/ginblog /app/
+COPY --from=builder /build/themes /app/themes
+
+EXPOSE 8000
+ENTRYPOINT ["/app/ginblog"]
