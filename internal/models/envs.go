@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ruzhila/gin-blog/internal/locales"
+	"github.com/ruzhila/gin-blog/internal/i18n"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -75,18 +75,18 @@ func GetConfigValues(db *gorm.DB) map[string]string {
 }
 
 func CheckDefaultConfigValues(db *gorm.DB) {
-	CheckConfigValue(db, Key_SiteName, "Gin blog", locales.TR("console.site_name"))
-	CheckConfigValue(db, Key_SiteLogo, "/logo.png", locales.TR("console.site_logo"))
-	CheckConfigValue(db, Key_SiteIcon, "/favicon.ico", locales.TR("console.site_icon"))
-	CheckConfigValue(db, Key_SiteUrl, "https://blog.ruzhil.cn", locales.TR("console.site_url"))
-	CheckConfigValue(db, Key_SiteAdmin, "Kui", locales.TR("console.site_admin"))
-	CheckConfigValue(db, Key_SiteAdminEmail, "kui@ruzhila.cn", locales.TR("console.site_admin_email"))
-	CheckConfigValue(db, Key_SiteTheme, "themes/default", locales.TR("console.site_theme"))
-	CheckConfigValue(db, Key_SiteLang, "zh-CN", locales.TR("console.site_lang"))
-	CheckConfigValue(db, Key_SiteKeywords, "gin, blog", locales.TR("console.site_keywords"))
-	CheckConfigValue(db, Key_SiteDescription, "A blog system powered by gin+gorm, by ruzhila.cn", locales.TR("console.site_description"))
-	CheckConfigValue(db, Key_SiteCopyRight, "© 2024 ruzhila.cn", locales.TR("console.site_copy_right"))
-	CheckConfigValue(db, Key_SiteGA, "", locales.TR("console.site_ga"))
-	CheckConfigValue(db, Key_SiteICP, "", locales.TR("console.site_icp"))
-	CheckConfigValue(db, Key_AllowRegistion, "true", locales.TR("console.allow_registion"))
+	CheckConfigValue(db, Key_SiteName, "Gin blog", i18n.TR("console.site_name"))
+	CheckConfigValue(db, Key_SiteLogo, "/logo.png", i18n.TR("console.site_logo"))
+	CheckConfigValue(db, Key_SiteIcon, "/favicon.ico", i18n.TR("console.site_icon"))
+	CheckConfigValue(db, Key_SiteUrl, "https://blog.ruzhil.cn", i18n.TR("console.site_url"))
+	CheckConfigValue(db, Key_SiteAdmin, "Kui", i18n.TR("console.site_admin"))
+	CheckConfigValue(db, Key_SiteAdminEmail, "kui@ruzhila.cn", i18n.TR("console.site_admin_email"))
+	CheckConfigValue(db, Key_SiteTheme, "themes/default", i18n.TR("console.site_theme"))
+	CheckConfigValue(db, Key_SiteLang, "zh-CN", i18n.TR("console.site_lang"))
+	CheckConfigValue(db, Key_SiteKeywords, "gin, blog", i18n.TR("console.site_keywords"))
+	CheckConfigValue(db, Key_SiteDescription, "A blog system powered by gin+gorm, by ruzhila.cn", i18n.TR("console.site_description"))
+	CheckConfigValue(db, Key_SiteCopyRight, "© 2024 ruzhila.cn", i18n.TR("console.site_copy_right"))
+	CheckConfigValue(db, Key_SiteGA, "", i18n.TR("console.site_ga"))
+	CheckConfigValue(db, Key_SiteICP, "", i18n.TR("console.site_icp"))
+	CheckConfigValue(db, Key_AllowRegistion, "true", i18n.TR("console.allow_registion"))
 }

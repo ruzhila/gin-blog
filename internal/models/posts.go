@@ -8,17 +8,16 @@ import (
 
 type Post struct {
 	gorm.Model `json:"-"`
-	Slug       string     `json:"slug" gorm:"unique;size:200"`
-	Title      string     `json:"title"`
-	Content    string     `json:"content"`
-	AuthorID   uint       `json:"-"`
-	Author     User       `json:"author,omitempty"`
-	Published  bool       `json:"published" gorm:"default:false;index"`
-	Tags       []Tag      `json:"tags,omitempty"`
-	Categories []Category `json:"categories,omitempty"`
-	Comments   []Comment  `json:"comments,omitempty"`
-	PageView   uint       `json:"pageView" gorm:"-"`
-	UserView   uint       `json:"userView" gorm:"-"`
+	Slug       string    `json:"slug" gorm:"unique;size:200"`
+	Title      string    `json:"title"`
+	Content    string    `json:"content"`
+	AuthorID   uint      `json:"-"`
+	Author     User      `json:"author,omitempty"`
+	Published  bool      `json:"published" gorm:"default:false;index"`
+	Tags       []Tag     `json:"tags,omitempty"`
+	Comments   []Comment `json:"comments,omitempty"`
+	PageView   uint      `json:"pageView" gorm:"-"`
+	UserView   uint      `json:"userView" gorm:"-"`
 }
 
 type PostLog struct {
@@ -45,7 +44,14 @@ type Tag struct {
 
 type Category struct {
 	gorm.Model `json:"-"`
-	PostID     uint   `json:"postId" gorm:"index"`
 	Name       string `json:"name" gorm:"unique;size:200"`
 	Label      string `json:"label" gorm:"size:200"`
+	Sort       int    `json:"sort"`
+	ParentID   uint   `json:"parentId" gorm:"index"`
+}
+
+type CategoryWithPost struct {
+	gorm.Model `json:"-"`
+	CategoryID uint `json:"categoryId" gorm:"index"`
+	PostID     uint `json:"postId" gorm:"index"`
 }

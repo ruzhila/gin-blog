@@ -1,4 +1,4 @@
-package locales
+package i18n
 
 import (
 	"fmt"
