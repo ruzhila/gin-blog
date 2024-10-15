@@ -10,7 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/ruzhila/gin-blog/internal"
 	"github.com/sirupsen/logrus"
-	"gorm.io/gorm"
 )
 
 var GitCommit string
@@ -18,15 +17,17 @@ var BuildTime string
 
 func main() {
 	var addr string
-	var runMigration bool
+	var runMigrationOnly bool
 	var logFile string = os.Getenv("LOG_FILE")
 	var traceSql bool = os.Getenv("TRACE_SQL") != ""
 	var logerLevel string = os.Getenv("LOG_LEVEL")
 	var dbDriver string = os.Getenv("DB_DRIVER")
 	var dsn string = os.Getenv("DSN")
+	var themePath string = os.Getenv("THEME_PATH")
 
-	var superUserEmail string
-	var superUserPassword string
+	if themePath == "" {
+		themePath = "themes/default"
+	}
 
 	logrus.SetReportCaller(true)
 	logrus.SetFormatter(&logrus.TextFormatter{
@@ -37,16 +38,29 @@ func main() {
 		},
 	})
 
-	flag.StringVar(&superUserEmail, "superuser", "", "Create an super user with email")
-	flag.StringVar(&superUserPassword, "password", "", "Super user password")
 	flag.StringVar(&addr, "addr", ":8080", "HTTP Serve address")
 	flag.StringVar(&logFile, "log", logFile, "Log output file name, default is os.Stdout")
 	flag.StringVar(&logerLevel, "level", logerLevel, "Log level debug|info|warn|error")
-	flag.BoolVar(&runMigration, "m", false, "Run migration only")
+	flag.BoolVar(&runMigrationOnly, "m", false, "Run migration only")
 	flag.StringVar(&dbDriver, "db", dbDriver, "DB Driver, sqlite|mysql")
 	flag.StringVar(&dsn, "dsn", dsn, "DB DSN")
 	flag.BoolVar(&traceSql, "tracesql", traceSql, "Trace sql execution")
+	flag.StringVar(&themePath, "theme", themePath, "Theme path")
 	flag.Parse()
+
+	themePath, _ = internal.HintThemePath(themePath)
+
+	fmt.Println("GitCommit   =", GitCommit)
+	fmt.Println("BuildTime   =", BuildTime)
+	fmt.Println("Addr        =", addr)
+	fmt.Println("Logfile     =", logFile)
+	fmt.Println("LogerLevel  =", logerLevel)
+	fmt.Println("DB Driver   =", dbDriver)
+	fmt.Println("DSN         =", dsn)
+	fmt.Println("TraceSql    =", traceSql)
+	fmt.Println("Migration   =", runMigrationOnly)
+	fmt.Println("ThemePath   =", themePath)
+
 	var lw io.Writer = os.Stdout
 	var err error
 
@@ -61,35 +75,28 @@ func main() {
 		logFile = "console"
 	}
 
-	fmt.Println("GitCommit   =", GitCommit)
-	fmt.Println("BuildTime   =", BuildTime)
-	fmt.Println("addr        =", addr)
-	fmt.Println("logfile     =", logFile)
-	fmt.Println("logerLevel  =", logerLevel)
-	fmt.Println("DB Driver   =", dbDriver)
-	fmt.Println("DSN         =", dsn)
-	fmt.Println("traceSql    =", traceSql)
-	fmt.Println("migration   =", runMigration)
+	db, err := internal.ConnectDB(dbDriver, dsn)
+	if err != nil {
+		panic(err)
+	}
 
-	// Init Database
-	if runMigration {
+	if runMigrationOnly {
 		fmt.Println("migration done")
 		return
 	}
 
-	r := gin.New()
-	var db *gorm.DB
 	m := internal.NewBlogApp(db)
-
 	logConfig := gin.LoggerConfig{
 		Output: lw,
 	}
+
+	r := gin.New()
 	r.Use(gin.LoggerWithConfig(logConfig), gin.Recovery())
 
 	if err = m.Prepare(r); err != nil {
 		panic(err)
 	}
 
-	fmt.Println("ruzhila blog is running on", addr)
+	fmt.Println("🎉 ginblog is running on", addr, "by https://ruzhila.cn")
 	r.Run(addr)
 }
