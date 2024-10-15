@@ -48,19 +48,6 @@ func main() {
 	flag.StringVar(&themePath, "theme", themePath, "Theme path")
 	flag.Parse()
 
-	themePath, _ = internal.HintThemePath(themePath)
-
-	fmt.Println("GitCommit   =", GitCommit)
-	fmt.Println("BuildTime   =", BuildTime)
-	fmt.Println("Addr        =", addr)
-	fmt.Println("Logfile     =", logFile)
-	fmt.Println("LogerLevel  =", logerLevel)
-	fmt.Println("DB Driver   =", dbDriver)
-	fmt.Println("DSN         =", dsn)
-	fmt.Println("TraceSql    =", traceSql)
-	fmt.Println("Migration   =", runMigrationOnly)
-	fmt.Println("ThemePath   =", themePath)
-
 	var lw io.Writer = os.Stdout
 	var err error
 
@@ -74,6 +61,22 @@ func main() {
 	} else {
 		logFile = "console"
 	}
+
+	fmt.Println("GitCommit   =", GitCommit)
+	fmt.Println("BuildTime   =", BuildTime)
+	fmt.Println("Addr        =", addr)
+	fmt.Println("Logfile     =", logFile)
+	fmt.Println("LogerLevel  =", logerLevel)
+	fmt.Println("DB Driver   =", dbDriver)
+	fmt.Println("DSN         =", dsn)
+	fmt.Println("TraceSql    =", traceSql)
+	fmt.Println("Migration   =", runMigrationOnly)
+
+	themePath, ok := internal.HintThemePath(themePath)
+	if !ok {
+		panic(fmt.Sprintf("theme path %s not found", themePath))
+	}
+	fmt.Println("ThemePath   =", themePath)
 
 	db, err := internal.ConnectDB(dbDriver, dsn)
 	if err != nil {

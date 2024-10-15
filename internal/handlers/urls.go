@@ -1,6 +1,10 @@
 package handlers
 
 import (
+	"net/http"
+	"os"
+	"path/filepath"
+
 	"github.com/gin-gonic/gin"
 	"github.com/ruzhila/gin-blog/internal/models"
 	"gorm.io/gorm"
@@ -35,6 +39,7 @@ func (h *Handlers) Register(engine *gin.Engine) error {
 	r.GET("/category/:category", h.handleCategories)
 	r.GET("/category/:category/:slug", h.handlePostWithCategory)
 	r.POST("/comment/:slug", h.handleComment)
+	r.GET("/sitemap.xml", h.handleSitemap)
 	r.StaticFS(envs.Static, NewThemeFileSystem(envs.ThemePath))
 	return nil
 }
@@ -80,4 +85,14 @@ func (h *Handlers) registerConsole(parent *gin.RouterGroup, path string) {
 	r.PUT("/comment/:id", h.handleConsoleCreateComment)
 	r.PATCH("/comment/:id", h.handleConsoleUpdateComment)
 	r.DELETE("/comment/:id", h.handleConsoleDeleteComment)
+
+	assetsPath := "assets"
+	for _, d := range []string{".", "..", "../.."} {
+		d = filepath.Join(d, "console")
+		if _, err := os.Stat(d); err == nil {
+			assetsPath = d
+			break
+		}
+	}
+	r.StaticFS("/assets", http.Dir(assetsPath))
 }

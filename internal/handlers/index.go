@@ -9,3 +9,7 @@ import (
 func (h *Handlers) handleIndexPage(c *gin.Context) {
 	c.AbortWithStatus(http.StatusNotImplemented)
 }
+
+func (h *Handlers) handleSitemap(c *gin.Context) {
+	c.AbortWithStatus(http.StatusNotImplemented)
+}
