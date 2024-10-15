@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ruzhila/gin-blog/internal/common"
 	"github.com/ruzhila/gin-blog/internal/models"
 	"gorm.io/gorm"
 )
@@ -84,6 +85,6 @@ func (h *Handlers) registerConsole(parent *gin.RouterGroup, path string) {
 	r.PATCH("/comment/:id", h.handleConsoleUpdateComment)
 	r.DELETE("/comment/:id", h.handleConsoleDeleteComment)
 
-	assetsPath, _ := models.HintResouce("console")
+	assetsPath, _ := common.HintResouce("console")
 	r.StaticFS("/assets", http.Dir(assetsPath))
 }

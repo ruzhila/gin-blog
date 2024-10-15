@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ruzhila/gin-blog/internal/common"
 	"github.com/ruzhila/gin-blog/internal/handlers"
 	"github.com/ruzhila/gin-blog/internal/models"
 	"github.com/sirupsen/logrus"
@@ -65,7 +66,7 @@ func (app *BlogApp) Prepare(engine *gin.Engine) error {
 		}
 	}
 
-	themePath, hint := models.HintResouce(models.GetEnvs().ThemePath)
+	themePath, hint := common.HintResouce(models.GetEnvs().ThemePath)
 	if !hint {
 		return fmt.Errorf("theme path %s not found", models.GetEnvs().ThemePath)
 	}
