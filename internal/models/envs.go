@@ -1,7 +1,6 @@
 package models
 
 import (
-	"strings"
 	"time"
 
 	"github.com/ruzhila/gin-blog/internal/i18n"
@@ -14,7 +13,6 @@ type Envs struct {
 	ConsolePrefix string `env:"CONSOLE" comment:"Prefix for console"`
 	AuthPrefix    string `env:"AUTH_PREFIX" comment:"Prefix for auth"`
 	Static        string `env:"STATIC" comment:"Prefix for static files"`
-	ThemePath     string `comment:"Path to the theme"`
 }
 
 func GetEnvs() *Envs {
@@ -23,7 +21,6 @@ func GetEnvs() *Envs {
 		Static:        "/static",
 		ConsolePrefix: "/console",
 		AuthPrefix:    "/auth",
-		ThemePath:     "",
 	}
 }
 
@@ -37,7 +34,6 @@ type Config struct {
 }
 
 func CheckConfigValue(db *gorm.DB, key, value, desc string) {
-	key = strings.ToTitle(key)
 	c := Config{Key: key, Value: value, Desc: desc}
 	db.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "key"}},
@@ -46,7 +42,6 @@ func CheckConfigValue(db *gorm.DB, key, value, desc string) {
 }
 
 func GetConfigValue(db *gorm.DB, key string) (string, bool) {
-	key = strings.ToTitle(key)
 	var c Config
 	if err := db.Where("key", key).Take(&c).Error; err != nil {
 		return "", false
@@ -55,7 +50,6 @@ func GetConfigValue(db *gorm.DB, key string) (string, bool) {
 }
 
 func SetConfigValue(db *gorm.DB, key, value string) error {
-	key = strings.ToTitle(key)
 	c := Config{Key: key, Value: value}
 	r := db.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "key"}},
@@ -69,7 +63,7 @@ func GetConfigValues(db *gorm.DB) map[string]string {
 	db.Find(&cs)
 	m := make(map[string]string)
 	for _, c := range cs {
-		m[strings.ToTitle(c.Key)] = c.Value
+		m[c.Key] = c.Value
 	}
 	return m
 }
@@ -81,7 +75,7 @@ func CheckDefaultConfigValues(db *gorm.DB) {
 	CheckConfigValue(db, Key_SiteUrl, "https://blog.ruzhil.cn", i18n.TR("console.site_url"))
 	CheckConfigValue(db, Key_SiteAdmin, "Kui", i18n.TR("console.site_admin"))
 	CheckConfigValue(db, Key_SiteAdminEmail, "kui@ruzhila.cn", i18n.TR("console.site_admin_email"))
-	CheckConfigValue(db, Key_SiteTheme, "themes/default", i18n.TR("console.site_theme"))
+	CheckConfigValue(db, Key_SiteTheme, "default", i18n.TR("console.site_theme"))
 	CheckConfigValue(db, Key_SiteLang, "zh-CN", i18n.TR("console.site_lang"))
 	CheckConfigValue(db, Key_SiteKeywords, "gin, blog", i18n.TR("console.site_keywords"))
 	CheckConfigValue(db, Key_SiteDescription, "A blog system powered by gin+gorm, by ruzhila.cn", i18n.TR("console.site_description"))

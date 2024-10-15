@@ -1,4 +1,4 @@
-package handlers
+package themes
 
 import (
 	"net/http"
@@ -8,9 +8,10 @@ import (
 )
 
 var NotAllowAccessExts = map[string]bool{
-	".exe": true,
-	".tpl": true,
-	".env": true,
+	".exe":  true,
+	".tmpl": true,
+	".tpl":  true,
+	".env":  true,
 }
 
 type ThemeFileSystem struct {

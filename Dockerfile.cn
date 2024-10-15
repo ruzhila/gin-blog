@@ -24,8 +24,9 @@ ENV LANG C.UTF-8
 RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 WORKDIR /app
+COPY --from=builder /build/templates /app/templates
+COPY --from=builder /build/locales /app/locales
 COPY --from=builder /build/gin-blog /app/
-COPY --from=builder /build/themes /app/themes
 
 EXPOSE 8000
 ENTRYPOINT ["/app/gin-blog"]

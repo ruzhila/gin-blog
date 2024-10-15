@@ -42,16 +42,33 @@ type Tag struct {
 	Label      string `json:"label" gorm:"size:200"`
 }
 
-type Category struct {
-	gorm.Model `json:"-"`
-	Name       string `json:"name" gorm:"unique;size:200"`
-	Label      string `json:"label" gorm:"size:200"`
-	Sort       int    `json:"sort"`
-	ParentID   uint   `json:"parentId" gorm:"index"`
+func CountPosts(db *gorm.DB) (total int64) {
+	db.Model(&Post{}).Count(&total)
+	return
 }
 
-type CategoryWithPost struct {
-	gorm.Model `json:"-"`
-	CategoryID uint `json:"categoryId" gorm:"index"`
-	PostID     uint `json:"postId" gorm:"index"`
+func (p *Post) AfterFind(tx *gorm.DB) (err error) {
+	tx = tx.Model(&PostPageView{}).Where("post_id", p.ID)
+	err = tx.Select("SUM(page_view)").Scan(&p.PageView).Error
+	if err != nil {
+		return
+	}
+	var userView int64
+	err = tx.Group("track_id").Count(&userView).Error
+	p.UserView = uint(userView)
+	return
+}
+
+func GetPosts(db *gorm.DB, offset, limit int) (posts []Post, err error) {
+	if limit == 0 {
+		limit = DefaultLimit
+	}
+
+	tx := db.Offset(offset).Limit(limit).Order("updated_at DESC")
+	tx = tx.Preload("Tags").Preload("Author").Preload("Comments")
+	err = tx.Find(&posts).Error
+	if err != nil {
+		return nil, err
+	}
+	return
 }

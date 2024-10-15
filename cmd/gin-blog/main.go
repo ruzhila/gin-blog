@@ -24,7 +24,7 @@ func main() {
 	var logerLevel string = os.Getenv("LOG_LEVEL")
 	var dbDriver string = os.Getenv("DB_DRIVER")
 	var dsn string = os.Getenv("DSN")
-	var themePath string = os.Getenv("THEME_PATH")
+	var theme string = os.Getenv("THEME")
 
 	logrus.SetReportCaller(true)
 	logrus.SetFormatter(&logrus.TextFormatter{
@@ -42,7 +42,7 @@ func main() {
 	flag.StringVar(&dbDriver, "db", dbDriver, "DB Driver, sqlite|mysql")
 	flag.StringVar(&dsn, "dsn", dsn, "DB DSN")
 	flag.BoolVar(&traceSql, "tracesql", traceSql, "Trace sql execution")
-	flag.StringVar(&themePath, "theme", themePath, "Theme path")
+	flag.StringVar(&theme, "theme", theme, "Theme name")
 	flag.Parse()
 
 	var lw io.Writer = os.Stdout
@@ -68,13 +68,9 @@ func main() {
 	fmt.Println("DSN         =", dsn)
 	fmt.Println("TraceSql    =", traceSql)
 	fmt.Println("Migration   =", runMigrationOnly)
-	fmt.Println("ThemePath   =", themePath)
+	fmt.Println("Theme       =", theme)
 
-	if themePath != "" {
-		models.GetEnvs().ThemePath = themePath
-	}
-
-	db, err := internal.ConnectDB(dbDriver, dsn)
+	db, err := models.OpenDatabase(dbDriver, dsn)
 	if err != nil {
 		panic(err)
 	}

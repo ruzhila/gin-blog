@@ -1,8 +1,17 @@
 package models
 
 import (
+	"fmt"
+	"strings"
+
+	"github.com/sirupsen/logrus"
+	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
+
+var DefaultLimit = 20
 
 const (
 	PostStatusDraft     = "draft"
@@ -34,4 +43,32 @@ func MakeMigration(db *gorm.DB) error {
 		&Config{},
 		&PostPageView{},
 	)
+}
+
+func OpenDatabase(driver, dsn string) (db *gorm.DB, err error) {
+	driver = strings.ToLower(driver)
+	cfg := &gorm.Config{}
+	switch driver {
+	case "sqlite3", "", "sqlite":
+		if dsn == "" {
+			dsn = "file::memory:"
+		}
+		db, err = gorm.Open(sqlite.Open(dsn), cfg)
+	case "mysql":
+		db, err = gorm.Open(mysql.Open(dsn), cfg)
+	case "postgres", "postgresql", "pg":
+		db, err = gorm.Open(postgres.Open(dsn), cfg)
+	default:
+		err = fmt.Errorf("unsupported driver %s", driver)
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	err = MakeMigration(db)
+	if err != nil {
+		return nil, err
+	}
+	logrus.WithField("driver", driver).WithField("dsn", dsn).Info("database connected")
+	return db, nil
 }

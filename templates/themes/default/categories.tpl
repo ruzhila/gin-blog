@@ -1,0 +1,1 @@
+{% extends "themes/default/_layout.tpl" %}

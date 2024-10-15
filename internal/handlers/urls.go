@@ -6,16 +6,19 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/ruzhila/gin-blog/internal/common"
 	"github.com/ruzhila/gin-blog/internal/models"
+	"github.com/ruzhila/gin-blog/internal/themes"
 	"gorm.io/gorm"
 )
 
 type Handlers struct {
-	db *gorm.DB
+	db    *gorm.DB
+	Theme string
 }
 
 func NewHandlers(db *gorm.DB) *Handlers {
 	return &Handlers{
-		db: db,
+		db:    db,
+		Theme: "default",
 	}
 }
 
@@ -28,18 +31,22 @@ func (h *Handlers) Register(engine *gin.Engine) error {
 	}
 
 	if envs.AuthPrefix != "" {
-		h.registerAuth(r, envs.AuthPrefix) // /console/auth/signin
+		h.registerAuth(r, envs.AuthPrefix)
 	}
 
 	r.GET("/", h.handleIndexPage)
 	r.GET("/post/:slug", h.handlePost)
+	r.GET("/tags", h.handleTags)
 	r.GET("/tag/:tag", h.handleTag)
 	r.GET("/tag/:tag/:slug", h.handlePostWithTag)
-	r.GET("/category/:category", h.handleCategories)
+	r.GET("/categories", h.handleCategories)
+	r.GET("/category/:category", h.handleCategorie)
 	r.GET("/category/:category/:slug", h.handlePostWithCategory)
 	r.POST("/comment/:slug", h.handleComment)
 	r.GET("/sitemap.xml", h.handleSitemap)
-	r.StaticFS(envs.Static, NewThemeFileSystem(envs.ThemePath))
+
+	templatesDir, _ := common.HintResouce("templates")
+	r.StaticFS(envs.Static, themes.NewThemeFileSystem(templatesDir))
 	return nil
 }
 

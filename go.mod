@@ -44,8 +44,10 @@ require (
 )
 
 require (
+	github.com/flosch/pongo2/v6 v6.0.0
 	github.com/gin-gonic/gin v1.10.0
 	github.com/stretchr/testify v1.9.0
+	gitlab.com/go-box/pongo2gin/v6 v6.0.8
 	golang.org/x/sys v0.20.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.5.7
