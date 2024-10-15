@@ -1,0 +1,14 @@
+console:
+  site_name: 网站名称
+  site_logo: 网站Logo
+  site_icon: 网站图标
+  site_url: 网站地址
+  site_admin: 网站管理员
+  site_admin_email: 管理员邮箱
+  site_theme: 网站主题
+  site_lang: 网站语言
+  site_keywords: 网站关键字
+  site_description: 网站描述
+  site_copy_right: 网站版权
+  site_ga: Google Analytics(网站分析)
+  site_icp: ICP备案号

@@ -1,0 +1,14 @@
+console:
+  site_name: Site Name
+  site_logo: Site Logo
+  site_icon: Site Icon
+  site_url: Site URL
+  site_admin: Site Admin
+  site_admin_email: Site Admin Email
+  site_theme: Site Theme
+  site_lang: Site Language
+  site_keywords: Site Keywords
+  site_description: Site Description
+  site_copy_right: Site Copy Right
+  site_ga: Google Analytics
+  site_icp: ICP License

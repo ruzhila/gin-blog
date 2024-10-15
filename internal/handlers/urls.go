@@ -2,8 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"os"
-	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"github.com/ruzhila/gin-blog/internal/models"
@@ -86,13 +84,6 @@ func (h *Handlers) registerConsole(parent *gin.RouterGroup, path string) {
 	r.PATCH("/comment/:id", h.handleConsoleUpdateComment)
 	r.DELETE("/comment/:id", h.handleConsoleDeleteComment)
 
-	assetsPath := "assets"
-	for _, d := range []string{".", "..", "../.."} {
-		d = filepath.Join(d, "console")
-		if _, err := os.Stat(d); err == nil {
-			assetsPath = d
-			break
-		}
-	}
+	assetsPath, _ := models.HintResouce("console")
 	r.StaticFS("/assets", http.Dir(assetsPath))
 }

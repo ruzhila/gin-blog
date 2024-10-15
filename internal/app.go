@@ -2,8 +2,6 @@ package internal
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -50,18 +48,11 @@ func ConnectDB(driver, dsn string) (db *gorm.DB, err error) {
 }
 
 func HintThemePath(themePath string) (string, bool) {
-	hintTheme := false
-	for _, d := range []string{".", "..", "../.."} {
-		d = filepath.Join(d, themePath)
-		if _, err := os.Stat(d); err == nil {
-			themePath = d
-			hintTheme = true
-			// update theme path
-			models.GetEnvs().ThemePath = themePath
-			break
-		}
+	themePath, ok := models.HintResouce(themePath)
+	if ok {
+		models.GetEnvs().ThemePath = themePath
 	}
-	return themePath, hintTheme
+	return themePath, ok
 }
 
 func NewBlogApp(db *gorm.DB) *BlogApp {
@@ -72,5 +63,6 @@ func NewBlogApp(db *gorm.DB) *BlogApp {
 }
 
 func (app *BlogApp) Prepare(engine *gin.Engine) error {
+	models.CheckDefaultConfigValues(app.db)
 	return app.handlers.Register(engine)
 }

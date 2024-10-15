@@ -15,7 +15,7 @@ RUN cd cmd && \
     -o /build/gin-blog .
 
 FROM debian:bookworm
-LABEL maintainer="admin@ruzhila.cn"
+LABEL maintainer="kui@ruzhila.cn"
 RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources
 RUN apt-get update && apt-get install -y ca-certificates tzdata git
 ENV DEBIAN_FRONTEND noninteractive
