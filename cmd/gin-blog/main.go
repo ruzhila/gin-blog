@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/ruzhila/gin-blog/internal"
+	"github.com/ruzhila/gin-blog/internal/models"
 	"github.com/sirupsen/logrus"
 )
 
@@ -24,10 +25,6 @@ func main() {
 	var dbDriver string = os.Getenv("DB_DRIVER")
 	var dsn string = os.Getenv("DSN")
 	var themePath string = os.Getenv("THEME_PATH")
-
-	if themePath == "" {
-		themePath = "themes/default"
-	}
 
 	logrus.SetReportCaller(true)
 	logrus.SetFormatter(&logrus.TextFormatter{
@@ -71,12 +68,11 @@ func main() {
 	fmt.Println("DSN         =", dsn)
 	fmt.Println("TraceSql    =", traceSql)
 	fmt.Println("Migration   =", runMigrationOnly)
-
-	themePath, ok := internal.HintThemePath(themePath)
-	if !ok {
-		panic(fmt.Sprintf("theme path %s not found", themePath))
-	}
 	fmt.Println("ThemePath   =", themePath)
+
+	if themePath != "" {
+		models.GetEnvs().ThemePath = themePath
+	}
 
 	db, err := internal.ConnectDB(dbDriver, dsn)
 	if err != nil {

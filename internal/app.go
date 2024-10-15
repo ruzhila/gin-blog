@@ -47,14 +47,6 @@ func ConnectDB(driver, dsn string) (db *gorm.DB, err error) {
 	return db, nil
 }
 
-func HintThemePath(themePath string) (string, bool) {
-	themePath, ok := models.HintResouce(themePath)
-	if ok {
-		models.GetEnvs().ThemePath = themePath
-	}
-	return themePath, ok
-}
-
 func NewBlogApp(db *gorm.DB) *BlogApp {
 	return &BlogApp{
 		db:       db,
@@ -64,5 +56,19 @@ func NewBlogApp(db *gorm.DB) *BlogApp {
 
 func (app *BlogApp) Prepare(engine *gin.Engine) error {
 	models.CheckDefaultConfigValues(app.db)
+
+	if models.GetEnvs().ThemePath == "" {
+		if p, ok := models.GetConfigValue(app.db, models.Key_SiteTheme); ok {
+			models.GetEnvs().ThemePath = p
+		} else {
+			models.GetEnvs().ThemePath = "themes/default"
+		}
+	}
+
+	themePath, hint := models.HintResouce(models.GetEnvs().ThemePath)
+	if !hint {
+		return fmt.Errorf("theme path %s not found", models.GetEnvs().ThemePath)
+	}
+	models.GetEnvs().ThemePath = themePath
 	return app.handlers.Register(engine)
 }

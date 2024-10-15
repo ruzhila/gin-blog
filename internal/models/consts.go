@@ -22,6 +22,7 @@ const (
 	Key_SiteCopyRight   = "SiteCopyRight"
 	Key_SiteGA          = "SiteGA"
 	Key_SiteICP         = "SiteICP"
+	Key_AllowRegistion  = "AllowRegistion"
 )
 
 func MakeMigration(db *gorm.DB) error {
@@ -31,5 +32,6 @@ func MakeMigration(db *gorm.DB) error {
 		&Comment{},
 		&User{},
 		&Config{},
+		&PostPageView{},
 	)
 }

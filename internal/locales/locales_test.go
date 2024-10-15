@@ -1,4 +1,4 @@
-package models
+package locales
 
 import (
 	"testing"
@@ -8,19 +8,19 @@ import (
 
 func TestLocaleLookup(t *testing.T) {
 	{
-		v := T_("site_name")
+		v := TR("site_name")
 		assert.Equal(t, "site_name", v)
 	}
 	{
-		v := T_("console.site_name")
+		v := TR("console.site_name")
 		assert.Equal(t, "Site Name", v)
 	}
 	{
 		SetDefaultLang("zh-CN")
-		v := T_("console.site_name")
+		v := TR("console.site_name")
 		assert.Equal(t, "网站名称", v)
 		defaultLocales["console.test"] = "Test Name"
-		v = T_("console.test")
+		v = TR("console.test")
 		assert.Equal(t, "Test Name", v)
 	}
 }

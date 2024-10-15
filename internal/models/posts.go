@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"gorm.io/gorm"
 )
 
@@ -15,12 +17,23 @@ type Post struct {
 	Tags       []Tag      `json:"tags,omitempty"`
 	Categories []Category `json:"categories,omitempty"`
 	Comments   []Comment  `json:"comments,omitempty"`
+	PageView   uint       `json:"pageView" gorm:"-"`
+	UserView   uint       `json:"userView" gorm:"-"`
 }
 
 type PostLog struct {
 	gorm.Model `json:"-"`
 	PostID     uint   `json:"postId" gorm:"index"`
 	Body       string `json:"body"`
+}
+
+type PostPageView struct {
+	ID       uint      `json:"id"`
+	PostID   uint      `json:"postId" gorm:"unique_index:idx_post_id_when_track"`
+	When     time.Time `json:"when" gorm:"unique_index:idx_post_id_when_track"`
+	TrackID  string    `json:"trackId" gorm:"size:64;unique_index:idx_post_id_when_track"`
+	IP       string    `json:"ip" gorm:"size:64"`
+	PageView uint      `json:"pageView"`
 }
 
 type Tag struct {

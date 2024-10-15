@@ -1,9 +1,10 @@
-package models
+package locales
 
 import (
 	"fmt"
 	"os"
 
+	"github.com/ruzhila/gin-blog/internal/common"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
@@ -24,7 +25,7 @@ func SetDefaultLang(lang string) {
 }
 
 func LoadLocales(lang string) map[string]string {
-	localeFile, hint := HintResouce("locales/" + lang + ".yaml")
+	localeFile, hint := common.HintResouce("locales/" + lang + ".yaml")
 	if !hint {
 		return nil
 	}
@@ -65,8 +66,8 @@ func flattenMap(prefix string, nestedMap map[string]any, result map[string]strin
 	}
 }
 
-// T_ is a simple i18n function
-func T_(id string) string {
+// TR is a simple i18n function
+func TR(id string) string {
 	if v, ok := currentLocales[id]; ok {
 		return v
 	}
