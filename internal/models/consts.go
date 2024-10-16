@@ -42,6 +42,7 @@ func MakeMigration(db *gorm.DB) error {
 		&User{},
 		&Config{},
 		&PostPageView{},
+		&Media{},
 	)
 }
 
